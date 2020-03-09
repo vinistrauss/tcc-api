@@ -5,6 +5,8 @@ import * as Yup from 'yup';
 import Class from '../models/Class';
 import Teacher from '../models/Teacher';
 
+const { utcToZonedTime } = require('date-fns-tz');
+
 class TeacherController {
     async store(req, res) {
         const schema = Yup.object().shape({
@@ -41,9 +43,10 @@ class TeacherController {
         }
 
         const date = new Date();
+        const utcDate = utcToZonedTime(date, 'America/Sao_Paulo');
         let timeRequest = '';
 
-        const hour = format(date, 'HH:mm');
+        const hour = format(utcDate, 'HH:mm');
 
         if (
             req.query.dayWeek !== undefined &&
@@ -54,8 +57,6 @@ class TeacherController {
             timeRequest.setHours(req.query.hour);
             timeRequest.setMinutes(req.query.minute);
         }
-
-        console.log(req.query.dayWeek);
 
         const teachers = await Teacher.findOne({
             where: {
