@@ -34,6 +34,19 @@ class TeacherController {
     }
 
     async index(req, res) {
+        if (req.query.name === undefined) {
+            const teacher = await Teacher.findAll({
+                include: [
+                    {
+                        model: Class,
+                        as: 'class',
+                    },
+                ],
+            });
+
+            return res.json(teacher);
+        }
+
         const schema = Yup.object().shape({
             name: Yup.string().required(),
         });
