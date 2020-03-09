@@ -55,6 +55,8 @@ class TeacherController {
             timeRequest.setMinutes(req.query.minute);
         }
 
+        console.log(req.query.dayWeek);
+
         const teachers = await Teacher.findOne({
             where: {
                 name: req.query.name,
@@ -64,9 +66,10 @@ class TeacherController {
                     model: Class,
                     as: 'class',
                     where: {
-                        day_week: req.query.dayWeek
-                            ? req.query.dayWeek
-                            : date.getDay(),
+                        day_week:
+                            req.query.dayWeek !== undefined
+                                ? req.query.dayWeek
+                                : date.getDay(),
                         start_hour: {
                             [Op.gte]:
                                 timeRequest !== ''
