@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  db:
+    container_name: "postgres"
+    image: postgres:11
+    environment:
+        DB_HOST: "localhost"
+        POSTGRES_DB: "tccApi"
+        POSTGRES_USER: "postgres"
+        POSTGRES_PASSWORD: "docker"
+    ports:
+        - "5432:5432"
+    volumes:
+        - .:/usr/app
+    restart: "always"
+  mongodb:
+    container_name: "mongodb"
+    image: mongo
+    environment:
+        DB_HOST: "localhost"
+    ports:
+        - "27017:27017"
+    volumes:
+        - .:/usr/app
+    restart: "always"
+  app:
+    build: .
+    ports:
+        - 3333:3333
+    volumes:
+        - .:/usr/app
+    restart: "always"
