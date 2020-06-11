@@ -5,6 +5,8 @@ import * as Yup from 'yup';
 import Class from '../models/Class';
 import Teacher from '../models/Teacher';
 
+import AppError from '../errors/AppError';
+
 const { utcToZonedTime } = require('date-fns-tz');
 
 class TeacherController {
@@ -15,7 +17,7 @@ class TeacherController {
         });
 
         if (!(await schema.isValid(req.body))) {
-            return res.status(400).json({ error: 'request body is invalid' });
+            throw new AppError('request body is invalid');
         }
 
         const classes = await Class.findOne({
@@ -23,9 +25,7 @@ class TeacherController {
         });
 
         if (!classes) {
-            return res
-                .status(400)
-                .json({ error: 'this classes does not found' });
+            throw new AppError('this classes does not found');
         }
 
         const teachers = await Teacher.create(req.body);
@@ -34,7 +34,7 @@ class TeacherController {
     }
 
     async index(req, res) {
-        if (req.query.name === undefined) {
+        if (!req.query.name) {
             const teacher = await Teacher.findAll({
                 include: [
                     {
@@ -52,7 +52,7 @@ class TeacherController {
         });
 
         if (!(await schema.isValid(req.query))) {
-            return res.status(400).json({ error: 'request query is invalid' });
+            throw new AppError('request query is invalid');
         }
 
         const date = new Date();
@@ -73,7 +73,7 @@ class TeacherController {
 
         const teachers = await Teacher.findOne({
             where: {
-                name: req.query.name,
+                name: { [Op.startsWith]: req.query.name },
             },
             include: [
                 {
@@ -104,9 +104,7 @@ class TeacherController {
         });
 
         if (!teachers) {
-            return res
-                .status(400)
-                .json({ error: 'this teacher does not found' });
+            throw new AppError('this teacher does not found');
         }
 
         if (req.body.classes_id !== undefined) {
@@ -115,9 +113,7 @@ class TeacherController {
             });
 
             if (!classes) {
-                return res
-                    .status(400)
-                    .json({ error: 'this classes does not found' });
+                throw new AppError('this classes does not found');
             }
         }
 
@@ -132,9 +128,7 @@ class TeacherController {
         });
 
         if (!teachers) {
-            return res
-                .status(400)
-                .json({ error: 'this teacher does not found' });
+            throw new AppError('this teacher does not found');
         }
 
         await teachers.destroy();

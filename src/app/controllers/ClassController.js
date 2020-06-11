@@ -2,6 +2,8 @@ import * as Yup from 'yup';
 
 import Class from '../models/Class';
 
+import AppError from '../errors/AppError';
+
 class ClassController {
     async store(req, res) {
         const schema = Yup.object().shape({
@@ -10,9 +12,7 @@ class ClassController {
         });
 
         if (!(await schema.isValid(req.body))) {
-            return res
-                .status(400)
-                .json({ error: 'this request body is invalid' });
+            throw new AppError('this request body is invalid');
         }
 
         const classes = await Class.create(req.body);
@@ -32,9 +32,7 @@ class ClassController {
         });
 
         if (!classes) {
-            return res
-                .status(400)
-                .json({ error: 'this classes does not found' });
+            throw new AppError('this classes does not found');
         }
 
         await classes.update(req.body);
@@ -46,9 +44,7 @@ class ClassController {
         const classes = await Class.findByPk(req.params.id);
 
         if (!classes) {
-            return res
-                .status(400)
-                .json({ error: 'this classes does not exist' });
+            throw new AppError('this classes does not exist');
         }
 
         await classes.destroy();
