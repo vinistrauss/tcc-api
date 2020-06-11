@@ -1,61 +1,78 @@
 import 'dotenv/config';
 
+import 'express-async-errors';
+
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-import * as Sentry from '@sentry/node';
-import 'express-async-errors';
+// import * as Sentry from '@sentry/node';
 
-import Youch from 'youch';
+// import Youch from 'youch';
+import AppError from './app/errors/AppError';
 import * as swaggerDocument from './swagger';
 
 // import path from 'path';
 
 import routes from './routes';
-import sentryConfig from './config/sentry';
+// import sentryConfig from './config/sentry';
 
 import './database';
-
-const pathToSwaggerUi = require('swagger-ui-dist').absolutePath();
 
 class App {
     constructor() {
         this.server = express();
-
-        Sentry.init(sentryConfig);
-        this.middlewares();
-        this.routes();
-        this.excepetionHandler();
         this.server.use(cors());
+        this.server.use(express.json());
+
+        // Sentry.init(sentryConfig);
+
+        this.routes();
+        this.middlewares();
+        this.handleError();
+        // this.excepetionHandler();
     }
 
     middlewares() {
-        this.server.use(Sentry.Handlers.requestHandler());
-        this.server.use(express.json());
-        this.server.use(express.static(pathToSwaggerUi));
-        this.server.use(
-            '/swagger',
-            swaggerUi.serve,
-            swaggerUi.setup(swaggerDocument)
-        );
+        // this.server.use(Sentry.Handlers.requestHandler());
+        this.server.use('/', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
     }
 
     routes() {
         this.server.use(routes);
-        this.server.use(Sentry.Handlers.errorHandler());
+        // this.server.use(Sentry.Handlers.errorHandler());
     }
 
-    excepetionHandler() {
-        this.server.use(async (err, req, res, next) => {
-            if (process.env.NODE_ENV === 'development') {
-                const errors = await new Youch(err, req).toJSON();
-
-                return res.status(500).json(errors);
+    handleError() {
+        this.server.use((err, request, response, _) => {
+            if (err instanceof AppError) {
+                return response.status(err.statusCode).json({
+                    status: 'error',
+                    message: err.message,
+                });
             }
 
-            return res.json(500).json({ error: 'Internal server error' });
+            console.error(err);
+
+            return response.status(500).json({
+                status: 'error',
+                message: 'Internal server error',
+            });
         });
     }
+
+    // excepetionHandler() {
+    //     this.server.use(async (err, req, res, next) => {
+    //         if (process.env.NODE_ENV === 'development') {
+    //             const errors = await new Youch(err, req).toJSON();
+
+    //             return res.status(500).json(errors);
+    //         }
+
+    //         return res
+    //             .json(500)
+    //             .json({ error: 'Internal server error' });
+    //     });
+    // }
 }
 
 export default new App().server;
