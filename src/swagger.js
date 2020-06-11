@@ -18,6 +18,14 @@ module.exports = {
     ],
     tags: [
         {
+            name: 'Users',
+            description: 'Verb for Users in the system',
+        },
+        {
+            name: 'Sessions',
+            description: 'Verb for Users in the system',
+        },
+        {
             name: 'Classes',
             description: 'Verb for classes in the system',
         },
@@ -25,11 +33,117 @@ module.exports = {
             name: 'Teachers',
             description: 'Verb for teacher in the system',
         },
+        {
+            name: 'Questions',
+            description: 'Verb for questions in the system',
+        },
     ],
     consumes: ['application/json'],
     produces: ['application/json'],
     paths: {
+        '/sessions': {
+            post: {
+                tags: ['Sessions'],
+                summary: 'Create a new session in system',
+                requestBody: {
+                    description: 'Class Object',
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/definitions/User',
+                            },
+                        },
+                    },
+                },
+                produces: ['application/json'],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                    },
+                    '400': {
+                        description: 'Failed. Bad post data.',
+                    },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
+                },
+            },
+        },
+        '/users': {
+            post: {
+                tags: ['Users'],
+                summary: 'Create a new user in system',
+                requestBody: {
+                    description: 'Class Object',
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/definitions/User',
+                            },
+                        },
+                    },
+                },
+                produces: ['application/json'],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                    },
+                    '400': {
+                        description: 'Failed. Bad post data.',
+                    },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
+                },
+            },
+            put: {
+                parameters: [
+                    {
+                        name: 'token',
+                        in: 'header',
+                        required: true,
+                        description: 'Session',
+                        type: 'string',
+                    },
+                ],
+                tags: ['Users'],
+                summary: 'Update user in system',
+                requestBody: {
+                    description: 'Class Object',
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/definitions/UserUpdate',
+                            },
+                        },
+                    },
+                },
+                produces: ['application/json'],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                    },
+                    '400': {
+                        description: 'Failed. Bad post data.',
+                    },
+                    '401': {
+                        description: 'Failed. Not Authorized.',
+                    },
+                },
+            },
+        },
         '/classes': {
+            parameters: [
+                {
+                    in: 'header',
+                    name: 'token',
+                    required: true,
+                    type: 'string',
+                },
+            ],
             get: {
                 tags: ['Classes'],
                 summary: 'Get all classes in system',
@@ -37,11 +151,23 @@ module.exports = {
                     '200': {
                         description: 'OK',
                     },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
                 },
             },
             post: {
                 tags: ['Classes'],
                 summary: 'Create a new class in system',
+                parameters: [
+                    {
+                        name: 'token',
+                        in: 'header',
+                        required: true,
+                        description: 'Session',
+                        type: 'string',
+                    },
+                ],
                 requestBody: {
                     description: 'Class Object',
                     required: true,
@@ -61,6 +187,9 @@ module.exports = {
                     '400': {
                         description: 'Failed. Bad post data.',
                     },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
                 },
             },
         },
@@ -71,6 +200,13 @@ module.exports = {
                     in: 'path',
                     required: true,
                     description: 'ID of the class that we want to match',
+                    type: 'string',
+                },
+                {
+                    name: 'token',
+                    in: 'header',
+                    required: true,
+                    description: 'Session',
                     type: 'string',
                 },
             ],
@@ -95,6 +231,13 @@ module.exports = {
                         required: true,
                         description: 'Class with new values of properties',
                     },
+                    {
+                        name: 'token',
+                        in: 'header',
+                        required: true,
+                        description: 'Session',
+                        type: 'string',
+                    },
                 ],
                 responses: {
                     '200': {
@@ -105,6 +248,9 @@ module.exports = {
                     },
                     '404': {
                         description: 'Failed. classes not found.',
+                    },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
                     },
                 },
             },
@@ -126,6 +272,9 @@ module.exports = {
                     '404': {
                         description: 'Failed. Class not found.',
                     },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
                 },
             },
         },
@@ -136,7 +285,7 @@ module.exports = {
                     {
                         name: 'name',
                         in: 'query',
-                        required: true,
+                        required: false,
                         description:
                             'name of the Teacher that we want to match',
                         type: 'string',
@@ -165,17 +314,36 @@ module.exports = {
                             'Minute of the Teacher that we want to match',
                         type: 'string',
                     },
+                    {
+                        name: 'token',
+                        in: 'header',
+                        required: true,
+                        description: 'Session',
+                        type: 'string',
+                    },
                 ],
                 summary: 'Get all teachers in system',
                 responses: {
                     '200': {
                         description: 'OK',
                     },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
                 },
             },
             post: {
                 tags: ['Teachers'],
                 summary: 'Create a new teacher in system',
+                parameters: [
+                    {
+                        name: 'token',
+                        in: 'header',
+                        required: true,
+                        description: 'Session',
+                        type: 'string',
+                    },
+                ],
                 requestBody: {
                     description: 'Teacher Object',
                     required: true,
@@ -195,6 +363,9 @@ module.exports = {
                     '400': {
                         description: 'Failed. Bad post data.',
                     },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
                 },
             },
         },
@@ -205,6 +376,13 @@ module.exports = {
                     in: 'path',
                     required: true,
                     description: 'ID of the Teacher that we want to match',
+                    type: 'string',
+                },
+                {
+                    name: 'token',
+                    in: 'header',
+                    required: true,
+                    description: 'Session',
                     type: 'string',
                 },
             ],
@@ -240,6 +418,9 @@ module.exports = {
                     '404': {
                         description: 'Failed. teacher not found.',
                     },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
                 },
             },
             delete: {
@@ -259,6 +440,116 @@ module.exports = {
                     },
                     '404': {
                         description: 'Failed. Teacher not found.',
+                    },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
+                },
+            },
+        },
+        '/questions/{number}': {
+            get: {
+                tags: ['Questions'],
+                summary: 'Get one question in system',
+                parameters: [
+                    {
+                        name: 'number',
+                        in: 'path',
+                        required: true,
+                        description: 'Number of the question',
+                        type: 'number',
+                    },
+                    {
+                        name: 'token',
+                        in: 'header',
+                        required: true,
+                        description: 'Session',
+                        type: 'string',
+                    },
+                ],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                    },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
+                },
+            },
+            put: {
+                tags: ['Questions'],
+                summary: 'Get one question in system',
+                parameters: [
+                    {
+                        name: 'number',
+                        in: 'path',
+                        required: true,
+                        description: 'Number of the question',
+                        type: 'number',
+                    },
+                    {
+                        name: 'token',
+                        in: 'header',
+                        required: true,
+                        description: 'Session',
+                        type: 'string',
+                    },
+                ],
+                requestBody: {
+                    description: 'Question Object',
+                    required: false,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/definitions/Question',
+                            },
+                        },
+                    },
+                },
+                responses: {
+                    '200': {
+                        description: 'OK',
+                    },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
+                    },
+                },
+            },
+        },
+        '/questions': {
+            post: {
+                tags: ['Questions'],
+                summary: 'Create a new question in system',
+                parameters: [
+                    {
+                        name: 'token',
+                        in: 'header',
+                        required: true,
+                        description: 'Session',
+                        type: 'string',
+                    },
+                ],
+                requestBody: {
+                    description: 'Question Object',
+                    required: true,
+                    content: {
+                        'application/json': {
+                            schema: {
+                                $ref: '#/definitions/Question',
+                            },
+                        },
+                    },
+                },
+                produces: ['application/json'],
+                responses: {
+                    '200': {
+                        description: 'OK',
+                    },
+                    '400': {
+                        description: 'Failed. Bad post data.',
+                    },
+                    '401': {
+                        description: 'Failed. Bad not authorized',
                     },
                 },
             },
@@ -293,6 +584,48 @@ module.exports = {
                 },
                 classes_id: {
                     type: 'number',
+                },
+            },
+        },
+        User: {
+            type: 'object',
+            properties: {
+                email: {
+                    type: 'string',
+                },
+                password: {
+                    type: 'string',
+                },
+            },
+        },
+        UserUpdate: {
+            type: 'object',
+            properties: {
+                email: {
+                    type: 'string',
+                },
+                oldPassword: {
+                    type: 'string',
+                },
+                password: {
+                    type: 'string',
+                },
+            },
+        },
+        Question: {
+            type: 'object',
+            properties: {
+                course: {
+                    type: 'string',
+                },
+                number: {
+                    type: 'number',
+                },
+                question: {
+                    type: 'string',
+                },
+                answer: {
+                    type: 'string',
                 },
             },
         },
