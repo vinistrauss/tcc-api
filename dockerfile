@@ -6,8 +6,8 @@ COPY package.json yarn.lock ./
 
 RUN yarn
 
-COPY ./src .
+COPY ./dist .
 
 EXPOSE 3333
 
-CMD ["yarn", "dev"]
+CMD ["yarn", "start"]
