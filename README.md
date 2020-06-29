@@ -6,6 +6,17 @@
 
 <p> Realizar uma pesquisa acadêmica a respeito de uma nova tecnologia chegada recentemente no Brasil, Alexa, no qual envolve uma interação de conversa entre homem e máquina, contexto de resposta, interação com API e tratamento de dados. </p>
 
+## Requerimentos
+
+- Node.js v10+
+- docker e docker-compose
+
+## Rodar o projeto
+
+- Instalar as dependências - `npm i`
+- Rodar o projeto - `docker-compose up -d --build`
+- Vá para o site - `localhost:3000/`
+
 ## Tecnologias utilizadas
 
 <ul>
