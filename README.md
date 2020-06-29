@@ -2,7 +2,7 @@
 
 <img src="https://imagens.unisanta.br/logos/logo.jpg" width="200" heigth="200"/>
 
-## OBJETIVO
+## Objetivo
 
 <p> Realizar uma pesquisa acadêmica a respeito de uma nova tecnologia chegada recentemente no Brasil, Alexa, no qual envolve uma interação de conversa entre homem e máquina, contexto de resposta, interação com API e tratamento de dados. </p>
 
