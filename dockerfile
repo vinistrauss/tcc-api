@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:13-alpine
 
 WORKDIR /usr/app
 
@@ -6,8 +6,8 @@ COPY package.json yarn.lock ./
 
 RUN yarn
 
-COPY ./dist .
+COPY ./src .
 
 EXPOSE 3333
 
-CMD ["yarn", "start"]
+CMD ["yarn", "dev"]
