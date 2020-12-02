@@ -11,8 +11,6 @@ services:
         POSTGRES_PASSWORD: "docker"
     ports:
         - "5432:5432"
-    volumes:
-        - .:/usr/app
     restart: "always"
   mongodb:
     container_name: "mongodb"
@@ -21,17 +19,16 @@ services:
         DB_HOST: "localhost"
     ports:
         - "27017:27017"
-    volumes:
-        - .:/usr/app
     restart: "always"
   app:
     build: .
     ports:
         - 3333:3333
+        - 9229:9229
     image: app
     command: >
       sh -c "npx sequelize db:migrate &&
-             yarn dev"
+             yarn dev:debug"
     volumes:
         - .:/usr/app
     environment:
@@ -42,7 +39,9 @@ services:
         DB_NAME: tccApi
         DB_MONGO: mongodb
         SECRET_JWT: e372985389e031db533d2fb315d666f0
-        EXPIRES_JWT: 7d
+        EXPIRES_JWT: 99d
+        JWT_USER: alexa_unisanta@unisanta.br
+        JWT_PASSWORD: alexatcc_apiturmaTI@345
     depends_on:
         - db
         - mongodb

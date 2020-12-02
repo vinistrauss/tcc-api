@@ -73,7 +73,7 @@ class TeacherController {
 
         const teachers = await Teacher.findOne({
             where: {
-                name: { [Op.startsWith]: req.query.name },
+                name: { [Op.startsWith]: req.query.name.toUpperCase() },
             },
             include: [
                 {
@@ -84,11 +84,11 @@ class TeacherController {
                             req.query.dayWeek !== undefined
                                 ? req.query.dayWeek
                                 : date.getDay(),
-                        start_hour: {
+                        end_hour: {
                             [Op.gte]:
-                                timeRequest !== ''
-                                    ? format(timeRequest, 'HH:mm')
-                                    : hour,
+                                timeRequest === ''
+                                    ? hour
+                                    : format(timeRequest, 'HH:mm'),
                         },
                     },
                 },

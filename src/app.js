@@ -1,5 +1,3 @@
-import 'dotenv/config';
-
 import 'express-async-errors';
 
 import express from 'express';
@@ -7,7 +5,8 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 // import * as Sentry from '@sentry/node';
 
-// import Youch from 'youch';
+import './database';
+
 import AppError from './app/errors/AppError';
 import * as swaggerDocument from './swagger';
 
@@ -16,7 +15,7 @@ import * as swaggerDocument from './swagger';
 import routes from './routes';
 // import sentryConfig from './config/sentry';
 
-import './database';
+import createLogger from './app/errors/logger';
 
 class App {
     constructor() {
@@ -51,7 +50,7 @@ class App {
                 });
             }
 
-            console.error(err);
+            createLogger.log('error', `❌ ${err}`);
 
             return response.status(500).json({
                 status: 'error',

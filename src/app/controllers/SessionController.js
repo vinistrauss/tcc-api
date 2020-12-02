@@ -9,8 +9,12 @@ import AppError from '../errors/AppError';
 class SessionController {
     async store(req, res) {
         const schema = Yup.object().shape({
-            email: Yup.string().required(),
-            password: Yup.string().required(),
+            email: Yup.string()
+                .required()
+                .oneOf([process.env.JWT_USER]),
+            password: Yup.string()
+                .required()
+                .oneOf([process.env.JWT_PASSWORD]),
         });
 
         if (!(await schema.isValid(req.body))) {
