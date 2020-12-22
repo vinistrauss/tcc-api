@@ -1,5 +1,4 @@
 import { Op } from 'sequelize';
-import { format } from 'date-fns';
 import * as Yup from 'yup';
 
 import Class from '../models/Class';
@@ -7,13 +6,10 @@ import Teacher from '../models/Teacher';
 
 import AppError from '../errors/AppError';
 
-const { utcToZonedTime } = require('date-fns-tz');
-
 class TeacherController {
     async store(req, res) {
         const schema = Yup.object().shape({
             name: Yup.string().required(),
-            classes_id: Yup.number().required(),
         });
 
         if (!(await schema.isValid(req.body))) {
@@ -21,11 +17,11 @@ class TeacherController {
         }
 
         const classes = await Class.findOne({
-            where: { id: req.body.classes_id },
+            where: { name: req.body.name },
         });
 
-        if (!classes) {
-            throw new AppError('this classes does not found');
+        if (classes) {
+            throw new AppError('This teacher already exist');
         }
 
         const teachers = await Teacher.create(req.body);
@@ -35,67 +31,18 @@ class TeacherController {
 
     async index(req, res) {
         if (!req.query.name) {
-            const teacher = await Teacher.findAll({
-                include: [
-                    {
-                        model: Class,
-                        as: 'class',
-                    },
-                ],
-            });
+            const teachers = await Teacher.findAll({ order: [['id', 'ASC']] });
 
-            return res.json(teacher);
+            return res.json(teachers);
         }
 
-        const schema = Yup.object().shape({
-            name: Yup.string().required(),
-        });
-
-        if (!(await schema.isValid(req.query))) {
-            throw new AppError('request query is invalid');
-        }
-
-        const date = new Date();
-        const utcDate = utcToZonedTime(date, 'America/Sao_Paulo');
-        let timeRequest = '';
-
-        const hour = format(utcDate, 'HH:mm');
-
-        if (
-            req.query.dayWeek !== undefined &&
-            req.query.hour !== undefined &&
-            req.query.minute !== undefined
-        ) {
-            timeRequest = new Date();
-            timeRequest.setHours(req.query.hour);
-            timeRequest.setMinutes(req.query.minute);
-        }
-
-        const teachers = await Teacher.findOne({
+        const teacher = await Teacher.findOne({
             where: {
                 name: { [Op.startsWith]: req.query.name.toUpperCase() },
             },
-            include: [
-                {
-                    model: Class,
-                    as: 'class',
-                    where: {
-                        day_week:
-                            req.query.dayWeek !== undefined
-                                ? req.query.dayWeek
-                                : date.getDay(),
-                        end_hour: {
-                            [Op.gte]:
-                                timeRequest === ''
-                                    ? hour
-                                    : format(timeRequest, 'HH:mm'),
-                        },
-                    },
-                },
-            ],
         });
 
-        return res.json(teachers);
+        return res.json(teacher);
     }
 
     async update(req, res) {

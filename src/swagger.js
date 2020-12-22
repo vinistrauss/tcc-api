@@ -559,6 +559,9 @@ module.exports = {
         Class: {
             type: 'object',
             properties: {
+                teacher_id: {
+                    type: 'number',
+                },
                 name: {
                     type: 'string',
                 },
@@ -581,9 +584,6 @@ module.exports = {
             properties: {
                 name: {
                     type: 'string',
-                },
-                classes_id: {
-                    type: 'number',
                 },
             },
         },

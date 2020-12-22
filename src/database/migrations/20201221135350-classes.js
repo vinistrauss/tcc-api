@@ -7,6 +7,13 @@ module.exports = {
                 autoIncrement: true,
                 primaryKey: true,
             },
+            teacher_id: {
+                type: Sequelize.INTEGER,
+                references: { model: 'teachers', key: 'id' },
+                onUpdate: 'CASCADE',
+                onDelete: 'SET NULL',
+                allowNull: false,
+            },
             name: {
                 type: Sequelize.STRING,
                 allowNull: false,

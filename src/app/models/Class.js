@@ -16,6 +16,13 @@ class Class extends Model {
         );
         return this;
     }
+
+    static associate(models) {
+        this.belongsTo(models.Teacher, {
+            foreignKey: 'teacher_id',
+            as: 'teachers',
+        });
+    }
 }
 
 export default Class;
