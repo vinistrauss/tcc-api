@@ -5,7 +5,9 @@
 [![mongoose](https://img.shields.io/badge/mongoose-%3E%3D%205.9.17-yellowgreen)](https://mongoosejs.com/)
 [![eslint](https://img.shields.io/badge/eslint-6.8.0-4b32c3?style=flat-square&logo=eslint)](https://eslint.org/)
 
-<img src="https://imagens.unisanta.br/logos/logo.jpg" width="20%">
+<p align="center">
+    <img src="https://imagens.unisanta.br/logos/logo.jpg" width="20%">
+</p>
 
 This api version allow register teachers and classes. List teacher has class in specify day week and next hour. So allow build questions about profession fair. For this need to be Authenticated in application with JWT
 
